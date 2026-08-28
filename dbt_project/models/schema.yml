@@ -1,1 +1,60 @@
+-- DBT schema tests and column documentation for all models
 
+version: 2
+
+models:
+  - name: stg_raw_trades
+    description: "Staged and lightly cast trade events awaiting validation"
+    columns:
+      - name: event_id
+        tests: [not_null]
+      - name: trade_ref
+        tests: [not_null]
+      - name: version
+        tests: [not_null]
+      - name: currency
+        tests:
+          - accepted_values:
+              values: ['USD', 'EUR', 'GBP', 'JPY', 'CHF', 'AUD', 'CAD']
+      - name: instrument_type
+        tests:
+          - accepted_values:
+              values: ['BOND', 'FX', 'EQUITY', 'SWAP', 'CREDIT']
+
+  - name: int_trade_classification
+    description: "Business-rule classification of each trade event"
+    columns:
+      - name: processing_action
+        tests:
+          - accepted_values:
+              values:
+                - ACCEPT
+                - ACCEPT_REPLACE
+                - REJECT_VERSION_TOO_LOW
+                - REJECT_MATURITY_IN_PAST
+                - REJECT_BOND_NOTIONAL_TOO_LOW
+
+  - name: valid_trades
+    description: "Final trade book - one row per trade_ref at latest accepted version[span_4](start_span)[span_4](end_span)"
+    columns:
+      - name: trade_ref
+        tests: [not_null, unique]
+      - name: trade_status
+        tests:
+          - accepted_values:
+              values: ['ACTIVE', 'EXPIRED', 'CANCELLED']
+      - name: version
+        tests: [not_null]
+
+  - name: rejected_trades
+    description: "Rejected trade log for compliance audit[span_5](start_span)[span_5](end_span)"
+    columns:
+      - name: rejection_id
+        tests: [not_null, unique]
+      - name: rejection_code
+        tests:
+          - accepted_values:
+              values:
+                - REJECT_VERSION_TOO_LOW
+                - REJECT_MATURITY_IN_PAST
+                - REJECT_BOND_NOTIONAL_TOO_LOW

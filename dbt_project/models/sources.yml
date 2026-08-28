@@ -1,1 +1,37 @@
+-- DBT sources definition: maps to actual Snowflake tables
 
+version: 2
+
+sources:
+  - name: raw
+    database: TRADE_PIPELINE_DB
+    schema: RAW
+    tables:
+      - name: trade_events
+        description: "All incoming trade events before validation[span_1](start_span)[span_1](end_span)"
+        columns:
+          - name: event_id
+            description: "Unique UUID per ingest event[span_2](start_span)[span_2](end_span)"
+            tests: [not_null]
+          - name: trade_ref
+            tests: [not_null]
+          - name: version
+            tests: [not_null]
+          - name: maturity_date
+            tests: [not_null]
+          - name: is_processed
+            tests: [not_null]
+
+  - name: final
+    database: TRADE_PIPELINE_DB
+    schema: FINAL
+    tables:
+      - name: trades
+        description: "Current state of each trade (latest accepted version)[span_3](start_span)[span_3](end_span)"
+        columns:
+          - name: trade_ref
+            tests: [not_null, unique]
+          - name: trade_status
+            tests:
+              - accepted_values:
+                  values: ['ACTIVE', 'EXPIRED', 'CANCELLED']

@@ -1,26 +1,33 @@
-name: 'trade_pipeline'
-version: '1.0.0'
-config-version: 2
-
-profile: 'trade_pipeline'
-
-model-paths: ["models"]
-analysis-paths: ["analyses"]
-test-paths: ["tests"]
-seed-paths: ["seeds"]
-macro-paths: ["macros"]
-snapshot-paths: ["snapshots"]
-
-target-path: "target"
-clean-targets:
-  - "target"
-  - "dbt_packages"
-
-models:
-  trade_pipeline:
-    staging:
-      materialized: view
-    intermediate:
-      materialized: ephemeral
-    marts:
-      materialized: incremental
+trade_pipeline:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('SNOWFLAKE_USER') }}"
+      password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
+      role: "US_SNOW_LLE_DEVELOPERS_RW_LG"
+      database: "TRADE_PIPELINE_DB"
+      warehouse: "DATA_TESTING_WH_XSMALL"
+      schema: "STAGING"
+      threads: 4
+    ci:
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('SNOWFLAKE_USER') }}"
+      password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
+      role: "US_SNOW_LLE_DEVELOPERS_RW_LG"
+      database: "TRADE_PIPELINE_DB"
+      warehouse: "DATA_TESTING_WH_XSMALL"
+      schema: "CI_STAGING"
+      threads: 4
+    prod:
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('SNOWFLAKE_USER') }}"
+      password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
+      role: "US_SNOW_LLE_DEVELOPERS_RW_LG"
+      database: "TRADE_PIPELINE_DB"
+      warehouse: "DATA_TESTING_WH_XSMALL"
+      schema: "FINAL"
+      threads: 4

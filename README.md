@@ -1,4 +1,3 @@
-# decaseone
 # Trade Data Engineering Pipeline
 
 ## Architecture

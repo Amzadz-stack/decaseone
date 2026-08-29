@@ -22,35 +22,35 @@ resource "snowflake_warehouse" "compute" {
   auto_resume    = true
 }
 
-# Role for data access (Updated to account role to avoid deprecation warnings)
+# Role for data access
 resource "snowflake_account_role" "decaseone_role" {
   name    = "DECASEONE_ROLE"
   comment = "Role for decaseone application"
 }
 
-# Grant database privileges to role
-resource "snowflake_database_grant" "decaseone_db_grant" {
-  database_name = snowflake_database.decaseone.name
-  privilege     = "USAGE"
-  roles         = [snowflake_account_role.decaseone_role.name]
+# Grant database privileges to role (v0.89 snowflake_grant syntax)
+resource "snowflake_grant" "decaseone_db_grant" {
+  privilege         = "USAGE"
+  database_name     = snowflake_database.decaseone.name
+  roles             = [snowflake_account_role.decaseone_role.name]
 }
 
 # Grant schema privileges to role
-resource "snowflake_schema_grant" "decaseone_schema_grant" {
-  database_name = snowflake_database.decaseone.name
-  schema_name   = snowflake_schema.public.name
-  privilege     = "USAGE"
-  roles         = [snowflake_account_role.decaseone_role.name]
+resource "snowflake_grant" "decaseone_schema_grant" {
+  privilege         = "USAGE"
+  database_name     = snowflake_database.decaseone.name
+  schema_name       = snowflake_schema.public.name
+  roles             = [snowflake_account_role.decaseone_role.name]
 }
 
 # Grant warehouse privileges to role
-resource "snowflake_warehouse_grant" "warehouse_grant" {
-  warehouse_name = snowflake_warehouse.compute.name
-  privilege      = "USAGE"
-  roles          = [snowflake_account_role.decaseone_role.name]
+resource "snowflake_grant" "warehouse_grant" {
+  privilege         = "USAGE"
+  warehouse_name    = snowflake_warehouse.compute.name
+  roles             = [snowflake_account_role.decaseone_role.name]
 }
 
-# Example Table (update this based on your DDL)
+# Example Table
 resource "snowflake_table" "example_table" {
   database  = snowflake_database.decaseone.name
   schema    = snowflake_schema.public.name
@@ -83,10 +83,10 @@ resource "snowflake_table" "example_table" {
 }
 
 # Grant table privileges to role
-resource "snowflake_table_grant" "example_table_grant" {
-  database_name = snowflake_database.decaseone.name
-  schema_name   = snowflake_schema.public.name
-  table_name    = snowflake_table.example_table.name
-  privilege     = "SELECT"
-  roles         = [snowflake_account_role.decaseone_role.name]
+resource "snowflake_grant" "example_table_grant" {
+  privilege         = "SELECT"
+  database_name     = snowflake_database.decaseone.name
+  schema_name       = snowflake_schema.public.name
+  table_name        = snowflake_table.example_table.name
+  roles             = [snowflake_account_role.decaseone_role.name]
 }

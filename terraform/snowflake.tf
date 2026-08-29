@@ -11,7 +11,6 @@ resource "snowflake_schema" "public" {
   database                    = snowflake_database.decaseone.name
   comment                     = "Public schema for decaseone"
   data_retention_time_in_days = 1
-  is_managed                  = false
 }
 
 # Warehouse for computation
@@ -53,10 +52,10 @@ resource "snowflake_warehouse_grant" "warehouse_grant" {
 
 # Example Table (update this based on your DDL)
 resource "snowflake_table" "example_table" {
-  database  = snowflake_database.decaseone.name
-  schema    = snowflake_schema.public.name
-  name      = "EXAMPLE_TABLE"
-  comment   = "Example table managed by Terraform"
+  database = snowflake_database.decaseone.name
+  schema   = snowflake_schema.public.name
+  name     = "EXAMPLE_TABLE"
+  comment  = "Example table managed by Terraform"
 
   column {
     name    = "ID"

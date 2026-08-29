@@ -29,25 +29,34 @@ resource "snowflake_account_role" "decaseone_role" {
 }
 
 # Grant database privileges to role
-resource "snowflake_database_grant" "decaseone_db_grant" {
-  database_name = snowflake_database.decaseone.name
-  privilege     = "USAGE"
-  roles         = [snowflake_account_role.decaseone_role.name]
+resource "snowflake_grant_privileges_to_account_role" "decaseone_db_grant" {
+  account_role_name = snowflake_account_role.decaseone_role.name
+  privileges        = ["USAGE"]
+  on_account_object {
+    object_type = "DATABASE"
+    object_name = snowflake_database.decaseone.name
+  }
 }
 
 # Grant schema privileges to role
-resource "snowflake_schema_grant" "decaseone_schema_grant" {
-  database_name = snowflake_database.decaseone.name
-  schema_name   = snowflake_schema.public.name
-  privilege     = "USAGE"
-  roles         = [snowflake_account_role.decaseone_role.name]
+resource "snowflake_grant_privileges_to_account_role" "decaseone_schema_grant" {
+  account_role_name = snowflake_account_role.decaseone_role.name
+  privileges        = ["USAGE"]
+  on_schema {
+    all_schemas_in_database = snowflake_database.decaseone.name # or specific schema scope below if needed
+    # Alternatively, for a specific schema:
+    # schema_name = "${snowflake_database.decaseone.name}.${snowflake_schema.public.name}"
+  }
 }
 
 # Grant warehouse privileges to role
-resource "snowflake_warehouse_grant" "warehouse_grant" {
-  warehouse_name = snowflake_warehouse.compute.name
-  privilege      = "USAGE"
-  roles          = [snowflake_account_role.decaseone_role.name]
+resource "snowflake_grant_privileges_to_account_role" "warehouse_grant" {
+  account_role_name = snowflake_account_role.decaseone_role.name
+  privileges        = ["USAGE"]
+  on_account_object {
+    object_type = "WAREHOUSE"
+    object_name = snowflake_warehouse.compute.name
+  }
 }
 
 # Example Table
@@ -83,10 +92,11 @@ resource "snowflake_table" "example_table" {
 }
 
 # Grant table privileges to role
-resource "snowflake_table_grant" "example_table_grant" {
-  database_name = snowflake_database.decaseone.name
-  schema_name   = snowflake_schema.public.name
-  table_name    = snowflake_table.example_table.name
-  privilege     = "SELECT"
-  roles         = [snowflake_account_role.decaseone_role.name]
+resource "snowflake_grant_privileges_to_account_role" "example_table_grant" {
+  account_role_name = snowflake_account_role.decaseone_role.name
+  privileges        = ["SELECT"]
+  on_schema_object {
+    object_type = "TABLE"
+    object_name = "${snowflake_database.decaseone.name}.${snowflake_schema.public.name}.${snowflake_table.example_table.name}"
+  }
 }

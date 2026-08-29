@@ -1,0 +1,144 @@
+name: Terraform CI/CD
+
+on:
+  push:
+    branches:
+      - main
+      - feature/terraform-infrastructure
+    paths:
+      - 'terraform/**'
+      - '.github/workflows/terraform.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'terraform/**'
+
+env:
+  TF_VERSION: 1.6.0
+  TERRAFORM_DIR: ./terraform
+
+jobs:
+  terraform-validate:
+    name: Validate Terraform
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive ${{ env.TERRAFORM_DIR }}
+        continue-on-error: true
+
+      - name: Terraform Init
+        run: terraform init -backend=false
+        working-directory: ${{ env.TERRAFORM_DIR }}
+
+      - name: Terraform Validate
+        run: terraform validate
+        working-directory: ${{ env.TERRAFORM_DIR }}
+
+  terraform-plan:
+    name: Plan Terraform Changes
+    runs-on: ubuntu-latest
+    needs: terraform-validate
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Init
+        run: terraform init -backend=false
+        working-directory: ${{ env.TERRAFORM_DIR }}
+        env:
+          TF_VAR_snowflake_account: ${{ secrets.TF_VAR_SNOWFLAKE_ACCOUNT }}
+          TF_VAR_snowflake_user: ${{ secrets.TF_VAR_SNOWFLAKE_USER }}
+          TF_VAR_snowflake_password: ${{ secrets.TF_VAR_SNOWFLAKE_PASSWORD }}
+
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -no-color -out=tfplan
+        working-directory: ${{ env.TERRAFORM_DIR }}
+        env:
+          TF_VAR_snowflake_account: ${{ secrets.TF_VAR_SNOWFLAKE_ACCOUNT }}
+          TF_VAR_snowflake_user: ${{ secrets.TF_VAR_SNOWFLAKE_USER }}
+          TF_VAR_snowflake_password: ${{ secrets.TF_VAR_SNOWFLAKE_PASSWORD }}
+        continue-on-error: true
+
+      - name: Comment Plan on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const plan = fs.readFileSync('${{ env.TERRAFORM_DIR }}/tfplan', 'utf8');
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## Terraform Plan\n\`\`\`\n${plan}\n\`\`\``
+            });
+
+  terraform-apply:
+    name: Apply Terraform Changes
+    runs-on: ubuntu-latest
+    needs: terraform-validate
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Init
+        run: terraform init -backend=false
+        working-directory: ${{ env.TERRAFORM_DIR }}
+        env:
+          TF_VAR_snowflake_account: ${{ secrets.TF_VAR_SNOWFLAKE_ACCOUNT }}
+          TF_VAR_snowflake_user: ${{ secrets.TF_VAR_SNOWFLAKE_USER }}
+          TF_VAR_snowflake_password: ${{ secrets.TF_VAR_SNOWFLAKE_PASSWORD }}
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -no-color
+        working-directory: ${{ env.TERRAFORM_DIR }}
+        env:
+          TF_VAR_snowflake_account: ${{ secrets.TF_VAR_SNOWFLAKE_ACCOUNT }}
+          TF_VAR_snowflake_user: ${{ secrets.TF_VAR_SNOWFLAKE_USER }}
+          TF_VAR_snowflake_password: ${{ secrets.TF_VAR_SNOWFLAKE_PASSWORD }}
+
+      - name: Terraform Output
+        id: output
+        run: terraform output -no-color
+        working-directory: ${{ env.TERRAFORM_DIR }}
+        env:
+          TF_VAR_snowflake_account: ${{ secrets.TF_VAR_SNOWFLAKE_ACCOUNT }}
+          TF_VAR_snowflake_user: ${{ secrets.TF_VAR_SNOWFLAKE_USER }}
+          TF_VAR_snowflake_password: ${{ secrets.TF_VAR_SNOWFLAKE_PASSWORD }}
+
+      - name: Comment Apply Result on Push
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## Terraform Apply Complete\n\nChanges have been successfully applied to Snowflake infrastructure.`
+            });

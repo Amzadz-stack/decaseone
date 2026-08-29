@@ -61,10 +61,10 @@ resource "snowflake_grant_privileges_to_account_role" "warehouse_grant" {
 
 # Example Table
 resource "snowflake_table" "example_table" {
-  database  = snowflake_database.decaseone.name
-  schema    = snowflake_schema.public.name
-  name      = "EXAMPLE_TABLE"
-  comment   = "Example table managed by Terraform"
+  database = snowflake_database.decaseone.name
+  schema   = snowflake_schema.public.name
+  name     = "EXAMPLE_TABLE"
+  comment  = "Example table managed by Terraform"
 
   column {
     name    = "ID"

@@ -29,34 +29,10 @@ variable "snowflake_warehouse" {
   default     = "COMPUTE_WH"
 }
 
-variable "snowflake_database" {
-  description = "Snowflake database"
-  type        = string
-  default     = ""
-}
-
-variable "snowflake_schema" {
-  description = "Snowflake schema"
-  type        = string
-  default     = ""
-}
-
 variable "snowflake_authenticator" {
   description = "Snowflake authenticator URL"
   type        = string
   default     = ""
-}
-
-variable "snowflake_client_trace_level" {
-  description = "Client trace level (OFF, ON, DEBUG)"
-  type        = string
-  default     = "OFF"
-}
-
-variable "snowflake_log_level" {
-  description = "Log level (DEBUG, INFO, WARNING, ERROR)"
-  type        = string
-  default     = "INFO"
 }
 
 # Database Resources Variables

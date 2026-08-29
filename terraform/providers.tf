@@ -18,14 +18,10 @@ terraform {
 }
 
 provider "snowflake" {
-  account             = var.snowflake_account
-  user                = var.snowflake_user
-  password            = var.snowflake_password
-  role                = var.snowflake_role
-  warehouse           = var.snowflake_warehouse
-  database            = var.snowflake_database
-  schema              = var.snowflake_schema
-  authenticator       = var.snowflake_authenticator
-  client_trace_level  = var.snowflake_client_trace_level
-  log_level           = var.snowflake_log_level
+  account       = var.snowflake_account
+  user          = var.snowflake_user
+  password      = var.snowflake_password
+  role          = var.snowflake_role
+  warehouse     = var.snowflake_warehouse
+  authenticator = var.snowflake_authenticator
 }

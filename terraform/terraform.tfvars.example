@@ -1,0 +1,35 @@
+# Snowflake Connection Variables
+# Copy this file to terraform.tfvars and fill in your actual values
+# IMPORTANT: terraform.tfvars should NEVER be committed to version control
+
+# Snowflake Account Identifier (e.g., xy12345.us-east-1)
+snowflake_account = "your-account-id"
+
+# Snowflake Username
+snowflake_user = "your-username"
+
+# Snowflake Password (use environment variables in CI/CD)
+snowflake_password = "your-password"
+
+# Snowflake Role (default: SYSADMIN)
+snowflake_role = "SYSADMIN"
+
+# Snowflake Warehouse (default: COMPUTE_WH)
+snowflake_warehouse = "COMPUTE_WH"
+
+# Database name
+database_name = "DECASEONE_DB"
+
+# Schema name
+schema_name = "PUBLIC"
+
+# Environment (dev, staging, prod)
+environment = "dev"
+
+# Tags for resources
+tags = {
+  Environment = "dev"
+  ManagedBy   = "Terraform"
+  Project     = "decaseone"
+  CostCenter  = "engineering"
+}

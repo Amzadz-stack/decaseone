@@ -29,7 +29,7 @@ output "warehouse_id" {
 # Role Outputs
 output "role_name" {
   description = "Name of the created role"
-  value       = snowflake_role.decaseone_role.name
+  value       = snowflake_account_role.decaseone_role.name
 }
 
 # Table Outputs
@@ -51,7 +51,7 @@ output "connection_info" {
     database  = snowflake_database.decaseone.name
     schema    = snowflake_schema.public.name
     warehouse = snowflake_warehouse.compute.name
-    role      = snowflake_role.decaseone_role.name
+    role      = snowflake_account_role.decaseone_role.name
   }
   sensitive = true
 }

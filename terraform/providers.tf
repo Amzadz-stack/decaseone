@@ -18,9 +18,11 @@ terraform {
 }
 
 provider "snowflake" {
-  account             = var.snowflake_account
-  user                = var.snowflake_user
-  password            = var.snowflake_password
-  role                = var.snowflake_role
-  warehouse           = var.snowflake_warehouse
+  account     = var.snowflake_account
+  user        = var.snowflake_user
+  password    = var.snowflake_password
+  role        = var.snowflake_role
+  warehouse   = var.snowflake_warehouse
+  # Note: database, schema, log_level, and client_trace_level 
+  # have been completely removed from here as they are invalid in the provider block.
 }

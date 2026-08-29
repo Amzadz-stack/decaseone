@@ -1,4 +1,5 @@
-name: Terraform CI/CD
+
+Name: Terraform CI/CD
 
 on:
   push:
@@ -17,6 +18,12 @@ on:
 env:
   TF_VERSION: 1.6.0
   TERRAFORM_DIR: ./terraform
+
+# Add this permissions block to allow GitHub Actions to comment on pull requests and issues
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
 
 jobs:
   terraform-validate:

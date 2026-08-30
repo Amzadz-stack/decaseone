@@ -1,4 +1,3 @@
-Based on your request to merge the first file up to line 62 and then continue picking the remaining variables from the second file into a single .tf format, here is the combined Terraform variables file.
 # Trade Pipeline — Terraform Variables
 # — Snowflake Connection ————————————————————————————————
 

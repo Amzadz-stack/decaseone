@@ -1,70 +1,75 @@
-# Snowflake Connection Variables
+Based on your request to merge the first file up to line 62 and then continue picking the remaining variables from the second file into a single .tf format, here is the combined Terraform variables file.
+# Trade Pipeline — Terraform Variables
+# — Snowflake Connection ————————————————————————————————
+
 variable "snowflake_account" {
   description = "Snowflake account identifier"
   type        = string
-  sensitive   = true
 }
 
 variable "snowflake_user" {
-  description = "Snowflake username"
+  description = "Snowflake username for Terraform"
   type        = string
-  sensitive   = true
 }
 
 variable "snowflake_password" {
-  description = "Snowflake password"
+  description = "Snowflake password (use env var TF_VAR_snowflake_password)"
   type        = string
   sensitive   = true
-}
-
-variable "snowflake_role" {
-  description = "Snowflake role to use"
-  type        = string
-  default     = "SYSADMIN"
-}
-
-variable "snowflake_warehouse" {
-  description = "Snowflake warehouse to use"
-  type        = string
-  default     = "COMPUTE_WH"
-}
-
-variable "snowflake_authenticator" {
-  description = "Snowflake authenticator URL"
-  type        = string
   default     = ""
 }
 
-# Database Resources Variables
-variable "database_name" {
-  description = "Name of the Snowflake database"
+variable "snowflake_role" {
+  description = "Snowflake role for object creation"
   type        = string
-  default     = "DECASEONE_DB"
+}
+
+variable "snowflake_warehouse" {
+  description = "Snowflake warehouse for task execution"
+  type        = string
+}
+
+variable "snowflake_authenticator" {
+  description = "Authentication method (snowflake, externalbrowser, etc.)"
+  type        = string
+  default     = "snowflake"
+}
+
+# — Target Environment ——————————————————————————————————
+
+variable "database_name" {
+  description = "Database where pipeline objects are created"
+  type        = string
 }
 
 variable "schema_name" {
-  description = "Name of the Snowflake schema"
+  description = "Schema where pipeline objects are created"
   type        = string
-  default     = "PUBLIC"
+}
+
+# — Pipeline Configuration ——————————————————————————————
+
+variable "notification_integration_name" {
+  description = "Email notification integration name (created by ACCOUNTADMIN)"
+  type        = string
+  default     = "TRADE_PIPELINE_EMAIL_NI"
+}
+
+variable "alert_email_recipients" {
+  description = "Email address(es) for alert notifications"
+  type        = string
+  default     = "ops-team@yourcompany.com"
 }
 
 variable "environment" {
-  description = "Environment name (dev, staging, prod)"
+  description = "Deployment environment (dev, staging, prod)"
   type        = string
   default     = "dev"
-
-  validation {
-    condition     = contains(["dev", "staging", "prod"], var.environment)
-    error_message = "Environment must be dev, staging, or prod."
-  }
 }
 
 variable "tags" {
-  description = "Tags to apply to resources"
+  description = "Common tags applied to resources"
   type        = map(string)
-  default = {
-    Environment = "dev"
-    ManagedBy   = "Terraform"
-    Project     = "decaseone"
-  }
+  default     = {}
 }
+

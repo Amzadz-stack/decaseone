@@ -42,27 +42,37 @@
 ## Repository Structure
 
 ```
-├── Case studies.sql                      # Master SQL: DDL, procedures, tasks, alerts, tests
-├── generate_trades.py                    # Python trade data simulator
-├── README.md                             # This file
+trade-pipeline/
+├── .github/
+│   └── workflows/
+│       └── trade_pipeline_cicd.yml    # CI/CD: lint -> test -> deploy
 ├── dbt_project/
-│   ├── dbt_project.yml                   # DBT project config
-│   ├── profiles.yml                      # Snowflake connection
-│   ├── packages.yml                      # Dependencies (none external)
+│   ├── dbt_project.yml
+│   ├── profiles.yml
+│   ├── packages.yml
 │   └── models/
-│       ├── sources.yml                   # Source table mappings
-│       ├── schema.yml                    # 22 data quality tests
+│       ├── sources.yml
+│       ├── schema.yml
 │       ├── staging/
-│       │   └── stg_raw_trades.sql        # VIEW: clean + cast raw events
+│       │   └── stg_raw_trades.sql
 │       ├── intermediate/
-│       │   └── int_trade_classification.sql  # EPHEMERAL: business rule logic
+│       │   └── int_trade_classification.sql
 │       └── marts/
-│           ├── valid_trades.sql          # INCREMENTAL: accepted trades
-│           └── rejected_trades.sql       # INCREMENTAL: rejected trades
-└── .github/
-    └── workflows/
-        └── trade_pipeline_cicd.yml       # CI/CD: lint, test, deploy
-```
+│           ├── valid_trades.sql
+│           └── rejected_trades.sql
+├── terraform/
+│   ├── .gitignore                    # Ignore .terraform/, *.tfstate*
+│   ├── providers.tf                  # Snowflake provider config
+│   ├── main.tf                       # Core terraform settings + backend
+│   ├── variables.tf                  # Input variables
+│   ├── outputs.tf                    # Output values
+│   ├── snowflake.tf                  # All Snowflake resources
+│   ├── terraform.tfvars.example      # Example values (committed)
+│   └── README.md                     # Terraform usage guide
+├── Case studies.sql                  # Master SQL (12 sections)
+├── generate_trades.py                # Python trade data generator
+├── ARCHITECTURE_DOCUMENT.md          # Technical architecture doc
+└── README.md                         # Project documentation
 
 ---
 

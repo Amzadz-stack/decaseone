@@ -46,6 +46,7 @@ trade-pipeline/
 ├── .github/
 │   └── workflows/
 │       └── trade_pipeline_cicd.yml    # CI/CD: lint -> test -> deploy
+│       └── terraform.yml    # CI/CD: lint -> test -> deploy
 ├── dbt_project/
 │   ├── dbt_project.yml
 │   ├── profiles.yml

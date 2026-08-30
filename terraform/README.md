@@ -26,7 +26,8 @@ CREATE OR REPLACE NOTIFICATION INTEGRATION TRADE_PIPELINE_EMAIL_NI
   TYPE = EMAIL ENABLED = TRUE;
 GRANT USAGE ON INTEGRATION TRADE_PIPELINE_EMAIL_NI TO ROLE <your_role>;
 
-## Quick Start
+
+**## Quick Start**
 
 Quick cd terraform
 
@@ -57,28 +58,29 @@ terraform/
 └── README.md               # This file
 
 
-| Variable | Required | Description |
-| :--- | :--- | :--- |
-| `snowflake_account` | Yes | Account identifier |
-| `snowflake_user` | Yes | Username |
-| `snowflake_password` | Yes | Password (use `TF_VAR_snowflake_password`) |
-| `snowflake_role` | Yes | Role for object creation |
-| `snowflake_warehouse` | Yes | Warehouse for tasks and alerts |
-| `database_name` | Yes | Target database |
-| `schema_name` | Yes | Target schema |
-| `notification_integration_name` | No | Email integration (default: `TRADE_PIPELINE_EMAIL_NI`) |
-| `alert_email_recipients` | No | Alert email address |
-| `environment` | No | Environment tag (default: `dev`) |
+| Variable                           | Required  | Description |
+|   :---                             | :---      | :---       |
+| `snowflake_account`                | Yes       | Account identifier |
+| `snowflake_user`                   | Yes       | Username |
+| `snowflake_password`               | Yes       | Password (use `TF_VAR_snowflake_password`) |
+| `snowflake_role`                   | Yes       | Role for object creation |
+| `snowflake_warehouse`              | Yes       | Warehouse for tasks and alerts |
+| `database_name`                    | Yes       | Target database |
+| `schema_name`                      | Yes       | Target schema |
+| `notification_integration_name`    | No        | Email integration (default: `TRADE_PIPELINE_EMAIL_NI`) |
+| `alert_email_recipients`           | No        | Alert email address |
+| `environment`                      | No        | Environment tag (default: `dev`) |
 
 
-Destroy
+**Destroy**
 to remove all pip lines objects 
 
 terraform destroy
 
 
-Notes
- State management: By default, state is stored locally. Uncomment the S3 backend block in ⁠providers.tf⁠ for remote state in production.
+NOTES:
+ State management: By default, state is stored locally. 
+ Uncomment the S3 backend block in ⁠providers.tf⁠ for remote state in production.
  Sensitive values: ⁠terraform.tfvars⁠ is in ⁠.gitignore⁠ — never commit real credentials. Use ⁠terraform.tfvars.example⁠ as a template.
  Alerts require ACCOUNTADMIN setup: The notification integration must exist before ⁠terraform apply⁠. Alerts will fail to create without it.
  Tasks start immediately: Tasks are created with ⁠enabled = true⁠. They will begin executing on schedule after apply.

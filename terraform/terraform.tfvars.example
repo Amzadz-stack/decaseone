@@ -1,35 +1,27 @@
-# Snowflake Connection Variables
-# Copy this file to terraform.tfvars and fill in your actual values
-# IMPORTANT: terraform.tfvars should NEVER be committed to version control
+# --------------------------------------------------
+# Trade Pipeline - Example Terraform Variables
+# Copy this file to terraform.tfvars and fill in your values
+# --------------------------------------------------
 
-# Snowflake Account Identifier (e.g., xy12345.us-east-1)
-snowflake_account = "your-account-id"
+# Snowflake connection
+snowflake_account     = "your_account_locator"
+snowflake_user        = "YOUR_USERNAME"
+snowflake_role        = "YOUR_ROLE"
+snowflake_warehouse   = "YOUR_WAREHOUSE"
+snowflake_authenticator = "snowflake"
+# snowflake_password is sensitive - set via environment variable:
+# export TF_VAR_snowflake_password="your_password"
 
-# Snowflake Username
-snowflake_user = "your-username"
+# Target environment
+database_name = "YOUR_DATABASE"
+schema_name   = "YOUR_SCHEMA"
 
-# Snowflake Password (use environment variables in CI/CD)
-snowflake_password = "your-password"
+# Pipeline configuration
+notification_integration_name = "TRADE_PIPELINE_EMAIL_NI"
+alert_email_recipients        = "ops-team@yourcompany.com"
+environment                   = "dev"
 
-# Snowflake Role (default: SYSADMIN)
-snowflake_role = "SYSADMIN"
-
-# Snowflake Warehouse (default: COMPUTE_WH)
-snowflake_warehouse = "COMPUTE_WH"
-
-# Database name
-database_name = "DECASEONE_DB"
-
-# Schema name
-schema_name = "PUBLIC"
-
-# Environment (dev, staging, prod)
-environment = "dev"
-
-# Tags for resources
 tags = {
-  Environment = "dev"
-  ManagedBy   = "Terraform"
-  Project     = "decaseone"
-  CostCenter  = "engineering"
+  Team    = "Data Engineering"
+  Project = "Trade Pipeline"
 }
